@@ -21,21 +21,13 @@ class OCRModel(nn.Module):
     def forward(self, x):
         # Pass input through CNN
         x = self.cnn(x)
-        x = x.permute(1, 2, 0)  # Rearrange for RNN input (sequence_length, batch_size, input_size)
+        batch_size,channels,height,width = x.size()  # Reshape to (batch_size, channels, sequence_length) and permute to (sequence_length, batch_size, channels)
+        x = x.permute(0, 2, 3, 1).contiguous()  # (batch_size, height, width, channels)
+        x = x.view(batch_size,height*width,channels)  # Flatten height and width
+        x = x.permute(1, 0 ,2)  # Rearrange for RNN input (sequence_length, batch_size, input_size)
         x, _ = self.rnn(x)
         x = self.fc(x)
         return x
 
-# Instantiate the model
-num_classes = 37  # 26 English letters + 10 digits + blank for CTC
-model = OCRModel(num_classes)
-
-ctc_loss = nn.CTCLoss()
 
 
-logits = torch.randn(50, 32, num_classes).log_softmax(2)  # (T, N, C) where T = sequence length, N = batch size, C = num classes
-targets = torch.randint(1, num_classes, (32, 20), dtype=torch.long)  # (N, S) where S = target sequence length
-input_lengths = torch.full((32,), 50, dtype=torch.long)  # All inputs have max length of 50
-target_lengths = torch.randint(10, 20, (32,), dtype=torch.long)  # Target lengths between 10 and 20
-
-loss = ctc_loss(logits, targets, input_lengths, target_lengths)

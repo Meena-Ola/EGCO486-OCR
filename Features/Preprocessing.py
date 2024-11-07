@@ -1,7 +1,7 @@
 import torchvision.transforms as transforms
 
 
-
+#preprocessing function
 preprocessing_pipeline = transforms.Compose([
     transforms.Grayscale(),  # Convert to grayscale
     transforms.Resize((32, 128)),  # Resize to 32x128
