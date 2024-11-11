@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
 class OCRModel(nn.Module):
     def __init__(self, num_classes):
         super(OCRModel, self).__init__()

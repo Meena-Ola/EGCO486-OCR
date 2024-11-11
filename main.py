@@ -1,9 +1,8 @@
 import torch.optim as optim
 import torch
-from Features import Model as M
+from Model import Model as M
 from Features import DataLoader as D
-from Features import LOSS as L
-
+from Model import LOSS as L
 num_epochs = 30
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # Select GPU
 model = M.OCRModel(L.num_classes)
