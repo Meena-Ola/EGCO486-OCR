@@ -20,8 +20,7 @@ def predict(model,device,image_paths,transform,num_feature):
         image = Image.open(image_path).convert('RGB')  # Convert to RGB
         image = transform(image).unsqueeze(0)
         image = image.to(device)
-    
-        model.eval()  # Set the model to evaluation mode
+        
         with torch.no_grad():
             output = model(image)
             probabilities = F.softmax(output, dim=1)
