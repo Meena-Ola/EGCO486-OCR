@@ -1,18 +1,16 @@
-from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
-from Features import Preprocessing as P
-from Features import CustomDataSet as C
+from Features import Split
 import os
+from Features import Preprocessing
 import math
-import random
 import matplotlib.pyplot as plt
-
+num_classes = 62  # 62 English letters (a-z,A-Z) + 10 digits (0-9)
+batch_size = 32
 # Define dataset and DataLoader with transformations
 Path = os.getcwd()
-dataset = ImageFolder(root=os.path.join(Path,r"ENGDataset"), transform=P.preprocessing_pipeline)
-dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+dataset = ImageFolder(root=os.path.join(Path,r"ENGDataset"), transform=Preprocessing.preprocessing_pipeline)
+train_loader, test_loader, val_loader = Split.load_split(dataset, batch_size ,test_split=0.3) 
 classnames = dataset.classes
-
 def show_images(images, labels):
     num_images = len(images)
     num_cols = 5  # Set the number of columns (e.g., 5)
@@ -26,7 +24,3 @@ def show_images(images, labels):
         plt.title(f'Label: {classnames[labels[i]]}')  # Show label as title
         plt.axis('off')  # Turn off axis
     plt.show()
-
-
-
-     
