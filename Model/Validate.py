@@ -15,6 +15,7 @@ def validate(model,device, val_loader, criterion):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     avg_loss = running_loss / len(val_loader)
-    accuracy = 100 * correct / total
-    print(f'Validation Loss: {avg_loss:.4f}, Validation Accuracy: {accuracy:.2f}%')
+   # accuracy = 100 * correct / total
+   # print(f'Validation Loss: {avg_loss:.4f}, Validation Accuracy: {accuracy:.2f}%')
+    return avg_loss
 

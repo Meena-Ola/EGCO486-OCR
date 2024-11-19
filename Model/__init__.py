@@ -1,1 +1,1 @@
-__all__ = ["Model","Test","Validate","Train"]
+__all__ = ["Model","Test","Validate","Train","plotting"]
