@@ -1,16 +1,18 @@
-import pandas as pd
+import os
+import csv
+def create_dataset_csv(image_dir, output_csv):
+    # List all image files in the directory
+    image_files = [f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
 
-# Define the mapping dictionary
-char_to_int = {idx:char  for idx, char in enumerate(' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')}
-# Load the CSV file
-csv_file_path = 'E:\CODE\Image Processing\Image-Processing-Project-\English\Fnt\english.csv'
-data = pd.read_csv(csv_file_path)
+    # Open the CSV file for writing
+    with open(output_csv, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['image', 'label'])  # Write the header
 
-# Apply the mapping to the 'label' column
-data['label'] = data['label'].apply(lambda x: char_to_int[x])
+        for image_file in image_files:
+            # Extract the label from the image file name (assuming the label is part of the file name)
+            label = os.path.splitext(image_file)[0]  # Remove the file extension to get the label
+            image_path = os.path.join(image_dir, image_file)
+            writer.writerow([image_path, label])
 
-# Save the updated CSV file
-updated_csv_file_path = 'english.csv'
-data.to_csv(csv_file_path, index=False)
-
-print(f'Updated CSV file saved to {updated_csv_file_path}')
+    print(f"CSV file saved as {output_csv}")
