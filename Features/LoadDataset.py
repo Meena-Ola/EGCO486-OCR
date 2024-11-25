@@ -9,23 +9,11 @@ import torchvision.transforms as transforms
 from sklearn.preprocessing import LabelEncoder
 
 class CustomDataSet(Dataset):
-    def __init__(self, csv_file, root_dir, transform=None):
-        self.data = pd.read_csv(os.path.join(root_dir, csv_file))  # Load CSV
+    def __init__(self, csv_file, root_dir,label_conder, transform=None):
+        self.data = pd.read_csv(csv_file)  # Load CSV
         self.root_dir = root_dir  # Folder containing images
         self.transform = transform
-        self.label_encoder = LabelEncoder()
-
-        # Fit the label encoder on the unique characters in the dataset
-        all_labels = ''.join(self.data['label'].astype(str).tolist())
-        self.label_encoder.fit(list(set(all_labels)))
-
-        
-        self.label_encoder = {chr(i+48): i+1 for i in range(10)}  # 0-9 -> 1-10
-        # Uppercase letters 'A-Z' will be encoded as 11-36
-        self.label_encoder.update({chr(i+65): i+11 for i in range(26)})  # A-Z -> 11-36
-        # Lowercase letters 'a-z' will be encoded as 37-62
-        self.label_encoder.update({chr(i+97): i+37 for i in range(26)})  # a-z -> 37-62
-
+        self.label_encoder = label_conder
         # Encode the labels
         self.data['encoded_labels'] = self.data['label'].apply(self.encode_label)
 
@@ -38,8 +26,8 @@ class CustomDataSet(Dataset):
 
     def __getitem__(self, idx):
         row = self.data.iloc[idx]
-        img_path = os.path.join(self.root_dir, row['image'])+'.png'
-        encoded_label = row['encoded_labels']
+        img_path = os.path.join(self.root_dir, row['image'])
+        encoded_label =row['encoded_labels']
         image = Image.open(img_path).convert('RGB')
 
         if self.transform:
@@ -59,12 +47,16 @@ class CustomDataSet(Dataset):
 preprocessing_pipeline = transforms.Compose([
     transforms.Grayscale(),  # Convert to grayscale
     transforms.RandomRotation(10),
-    transforms.RandomResizedCrop(64, scale=(0.8, 1.0)),
+    transforms.Resize((32, 128)),  # Resize to a fixed size      # Rotate by a random angle # Flip horizontally
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),  # Adjust color
+    transforms.RandomAffine(5, shear=10), # Affine transformation (rotate, scale, shear)
+    transforms.ToTensor(), 
     transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),  # Convert to tensor
     transforms.Normalize((0.5,), (0.5,))  # Normalize
 ])
-
+transform = transforms.Compose([
+                 # Convert image to tensor
+])
 def load_split(dataset, batch_size=32, train_ratio=0.7, val_ratio=0.2):
     train_size = int(train_ratio * len(dataset))
     val_size = int(val_ratio * len(dataset))

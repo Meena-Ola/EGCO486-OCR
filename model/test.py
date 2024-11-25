@@ -4,8 +4,6 @@ import torch.nn.functional as F
 def test(model, test_loader, criterion, device):
     model.eval()
     test_loss = 0
-    correct_sequences = 0  # For sequence-level accuracy (in this case, each image is a single character)
-    total_sequences = 0
     correct_characters = 0  # For character-level accuracy
     total_characters = 0
     
@@ -40,20 +38,16 @@ def test(model, test_loader, criterion, device):
                 pred_seq = pred_seq[pred_seq != 0]  # Remove blank token
 
                 # For a single character dataset, the sequence is of length 1
-                correct_sequences += (pred_seq == true_seq).all().item()  # Sequence-level accuracy (should match exactly)
                 correct_characters += (pred_seq == true_seq).sum().item()  # Character-level accuracy (should match exactly)
-                total_sequences += 1
                 total_characters += 1  # Since it's a single character per image
     
     # Compute average loss
     avg_loss = test_loss / len(test_loader)
     
     # Compute accuracy
-    sequence_accuracy = correct_sequences / total_sequences * 100
     character_accuracy = correct_characters / total_characters * 100
     
     print(f"Test Loss: {avg_loss:.4f}")
-    print(f"Sequence Accuracy: {sequence_accuracy:.2f}%")
-    print(f"Character Accuracy: {character_accuracy:.2f}%")
+    print(f" Accuracy: {character_accuracy:.2f}%")
     
     #return avg_loss, sequence_accuracy, character_accuracy

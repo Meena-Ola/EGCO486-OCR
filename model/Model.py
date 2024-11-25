@@ -22,17 +22,17 @@ class OCRModel(nn.Module):
         self.dropout = nn.Dropout(p=0.5)
         
         # LSTM layers
-        self.lstm = nn.LSTM(256 * 4, 128, bidirectional=True, batch_first=True)
+        self.lstm = nn.LSTM(256 * 2, 128, bidirectional=True, batch_first=True)
         
         # Fully connected layer
         self.fc = nn.Linear(256, num_classes)
     
     def forward(self, x):
         # CNN forward pass
-        x = self.pool1(self.bn1(torch.relu(self.conv1(x))))
-        x = self.pool2(self.bn2(torch.relu(self.conv2(x))))
-        x = self.pool3(self.bn3(torch.relu(self.conv3(x))))
-        x = self.pool4(self.bn4(torch.relu(self.conv4(x))))
+        x = self.pool1(self.bn1(nn.LeakyReLU()(self.conv1(x))))
+        x = self.pool2(self.bn2(nn.LeakyReLU()(self.conv2(x))))
+        x = self.pool3(self.bn3(nn.LeakyReLU()(self.conv3(x))))
+        x = self.pool4(self.bn4(nn.LeakyReLU()(self.conv4(x))))
           # Apply dropout
         x = self.dropout(x)
         
@@ -45,7 +45,7 @@ class OCRModel(nn.Module):
         
         # Fully connected layer
         x = self.fc(x)
-        
+        x = x.log_softmax(2)  
         return x
 
 criterion = nn.CTCLoss # Assuming 0 is the blank label
