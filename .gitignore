@@ -2,9 +2,9 @@ __pycache__
 __MACOSX
 Img/
 env/
-ThaiOCR/
-ThaiDataset/
-SampleIMG/
 EnglishDataSet/
+ThaiDataset/
+ThaiOCR/
+SampleIMG/
 SampleENG/
 SampleThai/
