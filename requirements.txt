@@ -91,7 +91,7 @@ sympy==1.13.1
 tenacity==9.0.0
 threadpoolctl==3.5.0
 toml==0.10.2
-torch==2.1.0 
+torch==2.0.1 
 torchvision==0.15.2
 tornado==6.4.1
 tqdm==4.67.0
